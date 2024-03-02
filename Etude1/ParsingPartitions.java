@@ -28,7 +28,7 @@ public class ParsingPartitions {
     /**
      * Method to create an arraylist from a fileReader Object
      * @param file
-     * @return
+     * @return listOfLines
      * @throws IOException
      */
     private static ArrayList<String> readFileToArrayList(FileReader file) throws IOException {
@@ -44,6 +44,11 @@ public class ParsingPartitions {
         return listOfLines;
     }
 
+    /**
+     * Method that takes inputArr and returns a clean arraylist based on the requirements
+     * @param inputArr
+     * @return flattendScenarios
+     */
     private static ArrayList<String> proReader(ArrayList<String> inputArr) {
         
         // Create a new ArrayList to store scenarios
@@ -74,17 +79,19 @@ public class ParsingPartitions {
             }
         }
 
-        // Add the last scenario
-        if(onlyHyphensAndEmptyLines(currentScenario)){
-            currentScenario.clear();
-        } else if(isValidScenario(currentScenario)){
-            scenarios.add(new ArrayList<>(currentScenario));
-            currentScenario.clear();
-        } else {
-            // Handle invalid scenario
-            currentScenario.add(0, "# INVALID SCENARIO");
-            scenarios.add(new ArrayList<>(currentScenario));
-            currentScenario.clear();
+        if(!currentScenario.isEmpty()) {
+            // Add the last scenario
+            if(onlyHyphensAndEmptyLines(currentScenario)){
+                currentScenario.clear();
+            } else if(isValidScenario(currentScenario)){
+                scenarios.add(new ArrayList<>(currentScenario));
+                currentScenario.clear();
+            } else {
+                // Handle invalid scenario
+                currentScenario.add(0, "# INVALID SCENARIO");
+                scenarios.add(new ArrayList<>(currentScenario));
+                currentScenario.clear();
+            }   
         }
 
         ArrayList<String> flattenedScenarios = new ArrayList<>();
@@ -114,11 +121,16 @@ public class ParsingPartitions {
         return flattenedScenarios;
     }
 
+    /**
+     * String method to identify type of string and modify it to the desired output
+     * @param line
+     * @return
+     */
     private static String identifyAndModifyLineType(String line) {
         if(emptyLine(line)){
-            line = line;
+            // null ?
         } else if (validateCommentLine(line)) {
-            line = line;   
+            // null ?
         } else if (validatePartitionLine(line)){
             line = getDescendingOrder(line);
         } else if(identifyScenario(line)){
@@ -129,10 +141,20 @@ public class ParsingPartitions {
         return line;
     }
 
+    /**
+     * Boolean method to identify scenario lines
+     * @param line
+     * @return
+     */
     private static boolean identifyScenario(String line) {
         return line.matches("-+");        
     }
  
+    /**
+     * Boolean method to go through a scenario to check for requirements that make it valid
+     * @param scenario
+     * @return
+     */
     private static boolean isValidScenario(ArrayList<String> scenario) {
         // If the scenario is empty, it's considered valid
         if (scenario.isEmpty()) {
@@ -150,10 +172,19 @@ public class ParsingPartitions {
         return validPartitionCount > 0;
     }    
 
+    /**
+     * Boolean method to identify empty line
+     * @param line
+     * @return
+     */
     private static boolean emptyLine(String line) {
         return line.isEmpty();
     }
 
+    /**
+     * Method to replace consecutive emptylines with only 1 empty line in a scenario
+     * @param scenario
+     */
     private static void replaceConsecutiveEmptyLines(ArrayList<String> scenario) {
         ArrayList<String> modifiedList = new ArrayList<>();
         boolean previousLineEmpty = false;
@@ -169,20 +200,24 @@ public class ParsingPartitions {
                 previousLineEmpty = false;
             }
         }
-    
-        // Add a single empty line if the last line was not empty
-        if (!previousLineEmpty && !modifiedList.isEmpty()) {
-            modifiedList.add("");
-        }
-    
         scenario.clear();
         scenario.addAll(modifiedList);
     }
 
+    /**
+     * Boolean method that validates Comment Lines
+     * @param line
+     * @return
+     */
     private static boolean validateCommentLine(String line) {
         return line.startsWith("#");
     }
 
+    /**
+     * Boolean method that validates a partition line
+     * @param line
+     * @return
+     */
     private static boolean validatePartitionLine(String line) {
         int index = 0;
         String[] delimiters = {",", " ", ", ", " ,"};
@@ -214,6 +249,11 @@ public class ParsingPartitions {
         return false;  // No consistent delimiter found
     }
 
+    /**
+     * Boolean method that return true if the scenario only has hyphens and empty lines
+     * @param scenario
+     * @return
+     */
     private static boolean onlyHyphensAndEmptyLines(ArrayList<String> scenario) {
         int count = 0;
         for(String line : scenario) {
@@ -223,7 +263,12 @@ public class ParsingPartitions {
         }
         return count == scenario.size();
     }
-    
+
+    /**
+     * Method to return input line into a descending order
+     * @param line
+     * @return
+     */
     private static String getDescendingOrder(String line) {
         String[] elements = line.split("\\s*,\\s*|\\s+");
     
@@ -244,6 +289,11 @@ public class ParsingPartitions {
         return result.toString().trim(); // Trim to remove trailing space
     }
 
+    /**
+     * Method to mark invalid lines
+     * @param line
+     * @return
+     */
     private static String markInvalid(String line) {
         String newLine = "# INVALID " + line;
         return newLine;
