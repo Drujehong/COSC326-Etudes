@@ -1,21 +1,16 @@
 package Etude1;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class ParsingPartitions {
     
     public static void main(String[] args) throws IOException {
+        Scanner scanner = new Scanner(System.in);
 
-        String filePath = "C:\\Users\\Andrew John\\source\\repos\\COSC326-Etudes\\Etude1\\i0.txt";
-        File file = new File(filePath);
-        FileReader fileRead = new FileReader(file);
-
-        ArrayList<String> rawr = readFileToArrayList(fileRead);
+        ArrayList<String> rawr = readLinesToArrayList(scanner);
         
         ArrayList<String> processedRawr = proReader(rawr);
         
@@ -26,21 +21,16 @@ public class ParsingPartitions {
     }
 
     /**
-     * Method to create an arraylist from a fileReader Object
-     * @param file
+     * Method to create an arraylist from a Scanner Object
+     * @param scanner
      * @return listOfLines
      * @throws IOException
      */
-    private static ArrayList<String> readFileToArrayList(FileReader file) throws IOException {
-        BufferedReader bufReader = new BufferedReader(file);
+    private static ArrayList<String> readLinesToArrayList(Scanner scanner) throws IOException {
         ArrayList<String> listOfLines = new ArrayList<>();
-
-        String line = bufReader.readLine();
-        while (line != null) {
-        listOfLines.add(line);
-        line = bufReader.readLine();
+        while(scanner.hasNextLine()) {
+            listOfLines.add(scanner.nextLine());
         }
-        bufReader.close();
         return listOfLines;
     }
 
@@ -72,13 +62,14 @@ public class ParsingPartitions {
                     currentScenario.clear();
                 } else {
                     // Handle invalid scenario
-                    currentScenario.add(0, "# INVALID SCENARIO");
+                    currentScenario.add(0, "# INVALID SCENARIO (Missing Valid Partition)");
                     scenarios.add(new ArrayList<>(currentScenario));
                     currentScenario.clear();
                 }
             }
         }
 
+        // Adding the last scenario if the scenario isn't empty
         if(!currentScenario.isEmpty()) {
             // Add the last scenario
             if(onlyHyphensAndEmptyLines(currentScenario)){
@@ -88,7 +79,7 @@ public class ParsingPartitions {
                 currentScenario.clear();
             } else {
                 // Handle invalid scenario
-                currentScenario.add(0, "# INVALID SCENARIO");
+                currentScenario.add(0, "# INVALID SCENARIO (Missing Valid Partition)");
                 scenarios.add(new ArrayList<>(currentScenario));
                 currentScenario.clear();
             }   
