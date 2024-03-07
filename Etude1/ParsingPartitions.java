@@ -1,5 +1,8 @@
 package Etude1;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,9 +11,14 @@ import java.util.Scanner;
 public class ParsingPartitions {
     
     public static void main(String[] args) throws IOException {
-        Scanner scanner = new Scanner(System.in);
+        // Scanner scanner = new Scanner(System.in);
 
-        ArrayList<String> rawr = readLinesToArrayList(scanner);
+        // ArrayList<String> rawr = readLinesToArrayList(scanner);
+        String filePath = "C:\\Users\\Andrew John\\source\\repos\\COSC326-Etudes\\Etude1\\i0.txt";
+        File file = new File(filePath);
+        FileReader fileRead = new FileReader(file);
+
+        ArrayList<String> rawr = readFileToArrayList(fileRead);
         
         ArrayList<String> processedRawr = proReader(rawr);
         
@@ -31,6 +39,25 @@ public class ParsingPartitions {
         while(scanner.hasNextLine()) {
             listOfLines.add(scanner.nextLine());
         }
+        return listOfLines;
+    }
+
+        /**
+     * Method to create an arraylist from a fileReader Object
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    private static ArrayList<String> readFileToArrayList(FileReader file) throws IOException {
+        BufferedReader bufReader = new BufferedReader(file);
+        ArrayList<String> listOfLines = new ArrayList<>();
+
+        String line = bufReader.readLine();
+        while (line != null) {
+        listOfLines.add(line);
+        line = bufReader.readLine();
+        }
+        bufReader.close();
         return listOfLines;
     }
 
@@ -210,36 +237,31 @@ public class ParsingPartitions {
      * @return
      */
     private static boolean validatePartitionLine(String line) {
-        int index = 0;
-        String[] delimiters = {",", " ", ", ", " ,"};
-    
-        while (index < delimiters.length) {
-            String[] elements = line.split(delimiters[index]);
-    
-            int sum = 0;
-            boolean validPartition = true;
-    
-            for (String element : elements) {
-                try {
-                    int num = Integer.parseInt(element);
-                    sum += num;
-                } catch (NumberFormatException e) {
-                    // Handle invalid integers
-                    validPartition = false;
-                    break;  // Break out of the loop if an invalid integer is found
-                }
-            }
-    
-            if (validPartition && sum > 0) {
-                return true;  // Valid partition found
-            }
-    
-            index++;  // Move on to the next delimiter
+        // Create a new line from remove all the whitespaces in the original line
+        String lineWithoutWhitespaces = String.join("", line.split("\\s+"));
+        if(commaInBeginning(lineWithoutWhitespaces) || commaInEnd(lineWithoutWhitespaces) || hasConsectiveCommas(lineWithoutWhitespaces) || negativeNum(lineWithoutWhitespaces) || containsZero(lineWithoutWhitespaces)) {
+            return false;
         }
-    
-        return false;  // No consistent delimiter found
-    }
+        int numbers = countNumbers(line);
+        int commas = countCommas(line);
+        if(commas != numbers-1 && commas != 0) {
+            return false;
+        }
 
+        String[] elements = line.split("\\s*,\\s*|\\s+");
+        int sum = 0;
+        for (String element : elements) {
+            try {
+                int num = Integer.parseInt(element);
+                sum += num;
+            } catch (NumberFormatException e) {
+                // Handle invalid integers
+                return false;
+            }
+        }
+
+        return sum > 0;
+    }
     /**
      * Boolean method that return true if the scenario only has hyphens and empty lines
      * @param scenario
@@ -288,6 +310,91 @@ public class ParsingPartitions {
     private static String markInvalid(String line) {
         String newLine = "# INVALID " + line;
         return newLine;
+    }
+
+    /**
+     * Boolean method that returns comma in the beginning
+     * @param line
+     * @return
+     */
+    private static boolean commaInBeginning(String line) {
+        return line.startsWith(",");
+    }
+
+    /**
+     * Boolean method that returns consecutives commas
+     * @param line
+     * @return
+     */
+    private static boolean hasConsectiveCommas(String line) {
+        for (int i = 0; i < line.length() - 1; i++) {
+            if (line.charAt(i) == ',' && line.charAt(i + 1) == ',') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Boolean method that returns comma at the end
+     * @param line
+     * @return
+     */
+    private static boolean commaInEnd(String line) {
+        return line.endsWith(",");
+    }
+
+    /**
+     * Boolean method that returns negative number
+     * @param line
+     * @return
+     */
+    private static boolean negativeNum(String line) {
+        return line.contains("-");
+    }
+
+    /**
+     * Boolean method that returns contains zero
+     * @param line
+     * @return
+     */
+    private static boolean containsZero(String line) {
+        return line.contains("0");
+    }
+
+    // Method to count numbers from a string
+    private static int countNumbers(String line) {
+        String[] elements = line.split("\\s*,\\s*|\\s+");
+        int count = 0;
+    
+        for (int i = 0; i < elements.length; i++) {
+            try{
+                count++;
+            } catch (NumberFormatException e) {
+                // do nothing
+            }
+        }
+
+        return count;
+    }
+
+    /**
+     * Int method that counts the amount of commas in a line
+     * @param line
+     * @return
+     */
+    private static int countCommas(String line) {
+        int count = 0;
+
+        // Iterate through each character in the string
+        for (char c : line.toCharArray()) {
+            // Check if the character is a comma
+            if (c == ',') {
+                count++;
+            }
+        }
+
+        return count;
     }
 
 }
