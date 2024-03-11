@@ -239,7 +239,7 @@ public class ParsingPartitions {
     private static boolean validatePartitionLine(String line) {
         // Create a new line from remove all the whitespaces in the original line
         String lineWithoutWhitespaces = String.join("", line.split("\\s+"));
-        if(commaInBeginning(lineWithoutWhitespaces) || commaInEnd(lineWithoutWhitespaces) || hasConsectiveCommas(lineWithoutWhitespaces) || negativeNum(lineWithoutWhitespaces) || containsZero(lineWithoutWhitespaces)) {
+        if(commaInBeginning(lineWithoutWhitespaces) || commaInEnd(lineWithoutWhitespaces) || hasConsectiveCommas(lineWithoutWhitespaces) || negativeNum(lineWithoutWhitespaces)) {
             return false;
         }
         int numbers = countNumbers(line);
@@ -251,6 +251,10 @@ public class ParsingPartitions {
         String[] elements = line.split("\\s*,\\s*|\\s+");
         int sum = 0;
         for (String element : elements) {
+            // Find zeros in the array 
+            if(startsWithZero(element)) {
+                return false;
+            }
             try {
                 int num = Integer.parseInt(element);
                 sum += num;
@@ -353,15 +357,6 @@ public class ParsingPartitions {
         return line.contains("-");
     }
 
-    /**
-     * Boolean method that returns contains zero
-     * @param line
-     * @return
-     */
-    private static boolean containsZero(String line) {
-        return line.contains("0");
-    }
-
     // Method to count numbers from a string
     private static int countNumbers(String line) {
         String[] elements = line.split("\\s*,\\s*|\\s+");
@@ -395,6 +390,15 @@ public class ParsingPartitions {
         }
 
         return count;
+    }
+
+    /**
+     * Boolean method to check if given string starts with 0
+     * @param element
+     * @return
+     */
+    private static boolean startsWithZero(String element) {
+        return element.startsWith("0");
     }
 
 }
