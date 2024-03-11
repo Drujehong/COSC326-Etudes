@@ -165,7 +165,7 @@ public class ParsingPartitions {
      * @return
      */
     private static boolean identifyScenario(String line) {
-        return line.matches("-+");        
+        return line.matches("-{3,}");       
     }
  
     /**
@@ -308,7 +308,7 @@ public class ParsingPartitions {
      * @return
      */
     private static String markInvalid(String line) {
-        String newLine = "# INVALID " + line;
+        String newLine = "# INVALID: " + line;
         return newLine;
     }
 
