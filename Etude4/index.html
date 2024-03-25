@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Quilting Bee Pattern</title>
+</head>
+<body>
+
+  <canvas id="myCanvas"></canvas>
+
+  <div class="container">
+    <div class="inputContainer">
+      <div>
+        <label for="scaleInput">Enter Scale</label>
+        <input type="number" id="scaleInput" min="1">
+      </div>
+    
+      <div>
+        <label for="RInput">R</label>
+        <input type="number" id="RInput" min="0" max="255">
+      </div>
+      
+      <div>
+        <label for="GInput">G</label>
+        <input type="number" id="GInput" min="0" max="255">
+      </div>
+    
+      <div>
+        <label for="BInput">B</label>
+        <input type="number" id="BInput" min="0" max="255">
+      </div>
+
+      <button id="submitButton">Submit</button>
+      <button id="clearButton">Clear the canvas</button>
+    </div>
+
+    <div class="inputContainer">
+      <textarea id="textInput" rows="4" cols="50" placeholder="Paste lines here"></textarea>
+      <button id="enterButton">Enter</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
