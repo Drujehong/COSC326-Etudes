@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 public class QuiltingBee extends JFrame {
 
-  private static int frameSize = 550;
   private static int quiltSize = 450;
+  private static int frameSize = quiltSize + 50;
   private static ArrayList<Square> squares = new ArrayList<Square>();
   private static int baseSize;
   private static double accScale = 0.0;
@@ -96,7 +96,7 @@ public class QuiltingBee extends JFrame {
     Scanner scan = new Scanner(System.in);
 
     while (scan.hasNextLine()) {
-      String[] params = scan.nextLine().split(" ");
+      String[] params = scan.nextLine().split("\\s+"); //Modified due to client request
       double scale = Double.parseDouble(params[0]);
       accScale += scale;
 
