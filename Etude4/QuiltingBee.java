@@ -43,8 +43,8 @@ public class QuiltingBee extends JFrame {
       g.fillRect(x - squares.get(i).size/2, y - squares.get(i).size/2, squares.get(i).size, squares.get(i).size);
       drawSquare(g, corners[0], corners[1], i + 1);
       drawSquare(g, corners[2], corners[3], i + 1);
-      drawSquare(g, corners[4], corners[5], i + 1);
       drawSquare(g, corners[6], corners[7], i + 1);
+      drawSquare(g, corners[4], corners[5], i + 1);
     }
   }
 
