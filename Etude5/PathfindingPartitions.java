@@ -39,9 +39,29 @@ public class PathfindingPartitions {
                 if (currScenario.size() < 3 && currScenario.size() > 1) {
                     String line1 = currScenario.get(0);
                     String line2 = currScenario.get(1);
-                    //TODO: IMPLEMENT LOGIC HERE!
+                    // Splitting line1 and line2 with white spaces
+                    String[] line1Par = line1.split("\s+");
+                    String[] line2Par = line2.split("\s+");
+                    // Creating new int[] using partition
+                    int[] partition1 = new int[line1Par.length];
+                    int[] partition2 = new int[line2Par.length];
+                    // loop to insert elements into partition1 and partition2 from line1Par and line2Par
+                    for(int j = 0; j < line1Par.length; j++) {
+                        partition1[j] = Integer.parseInt(line1Par[j]);
+                    }
+
+                    for(int j = 0; j < line2Par.length; j++) {
+                        partition2[j] = Integer.parseInt(line2Par[j]);
+                    }
+
+                    if(validParPair(partition1, partition2)) {
+                        // TODO: Implement LOGIC
+                    } else {
+                        System.out.println("No possible moves");
+                    }
+
                 } else {
-                    // INVALID PARTITION
+                    System.out.println("Invalid scenario");
                 }
                 currScenario.clear(); // Clear the scenario after processing
             }
