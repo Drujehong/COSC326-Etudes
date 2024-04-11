@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class PathfindingPartitions {
@@ -43,19 +44,24 @@ public class PathfindingPartitions {
                     String[] line1Par = line1.split("\s+");
                     String[] line2Par = line2.split("\s+");
                     // Creating new int[] using partition
-                    int[] partition1 = new int[line1Par.length];
-                    int[] partition2 = new int[line2Par.length];
-                    // loop to insert elements into partition1 and partition2 from line1Par and line2Par
+                    int[] initialPartition = new int[line1Par.length];
+                    int[] targetPartition = new int[line2Par.length];
+                    // loop to insert elements into initialPartition and targetPartition from line1Par and line2Par
                     for(int j = 0; j < line1Par.length; j++) {
-                        partition1[j] = Integer.parseInt(line1Par[j]);
+                        initialPartition[j] = Integer.parseInt(line1Par[j]);
                     }
 
                     for(int j = 0; j < line2Par.length; j++) {
-                        partition2[j] = Integer.parseInt(line2Par[j]);
+                        targetPartition[j] = Integer.parseInt(line2Par[j]);
                     }
 
-                    if(validParPair(partition1, partition2)) {
-                        // TODO: Implement LOGIC
+                    if(validParPair(initialPartition, targetPartition)) {
+                        int sumPar = calculateParSum(initialPartition); // Calculate sum for initial par
+                        rearrangePar(initialPartition); // rearrange initial pars
+                        rearrangePar(targetPartition); // rearrange target pars
+
+                        //TODO: Generate possible partitions from sumPar
+                        
                     } else {
                         System.out.println("No possible moves");
                     }
@@ -82,6 +88,28 @@ public class PathfindingPartitions {
         }
 
         return sum1 == sum2;
+    }
+
+    private static int calculateParSum(int[] par) {
+        int sum = 0;
+        for(int i = 0; i < par.length; i++) {
+            sum += par[i];
+        }
+        return sum;
+    }
+
+    private static int[] rearrangePar(int[] par) {
+        // Use Arrays.sort() for in-built sorting 
+        Arrays.sort(par); 
+    
+        // Reverse the array in-place
+        for (int i = 0; i < par.length / 2; i++) {
+            int temp = par[i];
+            par[i] = par[par.length - 1 - i];
+            par[par.length - 1 - i] = temp;
+        }
+    
+        return par; 
     }
 
     public static void main(String[] args) throws FileNotFoundException{
