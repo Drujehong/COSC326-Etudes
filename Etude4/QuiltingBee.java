@@ -3,25 +3,31 @@ import javax.swing.*;
 import java.util.Scanner;
 import java.util.ArrayList;
 
-public class QuiltingBee extends JFrame {
+public class QuiltingBee extends JPanel {
 
-  private static int quiltSize = 450;
-  private static int frameSize = quiltSize + 50;
+  private static int frameSize = 550;
   private static ArrayList<Square> squares = new ArrayList<Square>();
-  private static int baseSize;
   private static double accScale = 0.0;
+  private static int currentSquareLayer = 0;
 
   /** Constructor for QuiltingBee */
   public QuiltingBee() {
-    baseSize = (int)((double)quiltSize/accScale);
-    setSize(frameSize, frameSize);
-    setDefaultCloseOperation(EXIT_ON_CLOSE);
-    setVisible(true);
+    JFrame frame = new JFrame("Quilting Bees");
+    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    frame.getContentPane().add(this);
+    frame.setPreferredSize(new Dimension(frameSize + 25, frameSize + 50));
+    frame.setLocationRelativeTo(null);
+    frame.pack();
+    frame.setVisible(true);
   }
 
-  public void paint(Graphics g) {
-    // paints recursively
-    drawSquare(g, frameSize/2, frameSize/2, 0);
+  public void paintComponent(Graphics g) {
+    super.paintComponent(g);
+    while(currentSquareLayer < squares.size()) {
+      drawSquare(g, frameSize/2, frameSize/2, 0);
+      currentSquareLayer++;
+    }
+    currentSquareLayer = 0;
   }
 
   /**
@@ -32,29 +38,26 @@ public class QuiltingBee extends JFrame {
    * @param i
    */
   public static void drawSquare(Graphics g, int x, int y, int i) {
-    if (i == squares.size()) {
-      return;
-    } else {
-      squares.get(i).size = (int)(squares.get(i).scale * baseSize);
-      squares.get(i).xCenter = x;
-      squares.get(i).yCenter = y;
-      int[] corners = Square.getCorners(squares.get(i));
+    double squareSize = ((squares.get(i).scale / accScale) * frameSize);
+    int convertedSquareSize = (int) squareSize;
+
+    if(currentSquareLayer == squares.get(i).layer) {
       g.setColor(squares.get(i).rgb);
-      g.fillRect(x - squares.get(i).size/2, y - squares.get(i).size/2, squares.get(i).size, squares.get(i).size);
-      drawSquare(g, corners[0], corners[1], i + 1);
-      drawSquare(g, corners[2], corners[3], i + 1);
-      drawSquare(g, corners[6], corners[7], i + 1);
-      drawSquare(g, corners[4], corners[5], i + 1);
+      g.fillRect(x - convertedSquareSize/2, y - convertedSquareSize/2, convertedSquareSize, convertedSquareSize);
+    }
+    if(squares.get(i + 1)!=null) {
+      drawSquare(g, x - convertedSquareSize / 2, y - convertedSquareSize / 2, i + 1);
+      drawSquare(g, x - convertedSquareSize / 2, y + convertedSquareSize / 2, i + 1);
+      drawSquare(g, x + convertedSquareSize / 2, y - convertedSquareSize / 2, i + 1);
+      drawSquare(g, x + convertedSquareSize / 2, y + convertedSquareSize / 2, i + 1);
     }
   }
 
-  private static class Square extends JPanel {
+  private static class Square {
 
     public double scale;
-    public int size;
     public Color rgb;
-    public int xCenter;
-    public int yCenter;
+    public int layer;
 
     /**
      * Constructor for Square object
@@ -62,31 +65,12 @@ public class QuiltingBee extends JFrame {
      * @param r
      * @param g
      * @param b
+     * @param layer
      */
-    public Square(double scale, int r, int g, int b) {
+    public Square(double scale, int r, int g, int b, int layer) {
       this.scale = scale;
       this.rgb = new Color(r, g, b);
-    }
-
-    // Points that next square layer will be centered on
-    public static int[] getCorners(Square s) {
-      int[] corners = new int[8];
-
-      // top left corner
-      corners[0] = s.xCenter - s.size/2;
-      corners[1] = s.yCenter + s.size/2;
-      // top right corner
-      corners[2] = s.xCenter + s.size/2;
-      corners[3] = s.yCenter + s.size/2;
-      // bottom right corner
-      corners[4] = s.xCenter + s.size/2;
-      corners[5] = s.yCenter - s.size/2;
-      // bottom left corner
-      corners[6] = s.xCenter - s.size/2;
-      corners[7] = s.yCenter - s.size/2;
-
-      return corners;
-
+      this.layer = layer;
     }
 
   }
@@ -94,7 +78,7 @@ public class QuiltingBee extends JFrame {
   public static void main(String[] args) {
 
     Scanner scan = new Scanner(System.in);
-
+    int squareLayer = 0;
     while (scan.hasNextLine()) {
       String[] params = scan.nextLine().split("\\s+"); //Modified due to client request
       double scale = Double.parseDouble(params[0]);
@@ -105,9 +89,11 @@ public class QuiltingBee extends JFrame {
         color[i] = Integer.parseInt(params[i + 1]);
       }
 
-      Square layer = new Square(scale, color[0], color[1], color[2]);
-      squares.add(layer);
+      Square square = new Square(scale, color[0], color[1], color[2], squareLayer);
+      squares.add(square);
+      squareLayer++;
     }
+    squares.add(null); // to make sure the loop in recursive eventually stops
 
     QuiltingBee quilt = new QuiltingBee();
     scan.close();
