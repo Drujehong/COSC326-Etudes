@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Collections;
 import java.util.Scanner;
 
 public class PathfindingPartitions {
@@ -25,6 +24,11 @@ public class PathfindingPartitions {
         return listOfLines;
     }
 
+    /**
+     * This method will process the input lines and also handle the pathfinding parts
+     * @param inputArr
+     * @return
+     */
     private static ArrayList<String> proReader(ArrayList<String> inputArr) {
         // Create a new ArrayList to store scenarios
         ArrayList<ArrayList<String>> scenarios = new ArrayList<>();
@@ -138,6 +142,7 @@ public class PathfindingPartitions {
 
         } else {
             // The flattened scenario is empty
+            // Would technically never happen in the first place
             System.out.println("Flattened Scenario is empty");
         }
 
@@ -327,7 +332,11 @@ public class PathfindingPartitions {
         return element.startsWith("0");
     }
 
-    // Method to count numbers from a string
+    /**
+     * Int method that count the numbers in a line
+     * @param line
+     * @return
+     */
     private static int countNumbers(String line) {
         String[] elements = line.split("\\s*,\\s*|\\s+");
         int count = 0;
@@ -364,7 +373,7 @@ public class PathfindingPartitions {
     }
 
     /**
-     * Boolean method to go through a scenario to check for requirements that make
+     * Boolean method to go through a scenario to check for requirements that makes
      * it valid
      * 
      * @param scenario
@@ -387,6 +396,13 @@ public class PathfindingPartitions {
         return validPartitionCount == 2;
     }
 
+    /**
+     * Boolean method that returns whether the partitions can even move from one another
+     * 
+     * @param par1
+     * @param par2
+     * @return sum1 == sum2
+     */
     private static boolean validParPair(List<Integer> par1, List<Integer> par2) {
         int sum1 = 0;
         int sum2 = 0;
@@ -402,7 +418,12 @@ public class PathfindingPartitions {
         return sum1 == sum2;
     }
 
-    // Helper function to convert String representation to List<Integer>
+    /**
+     * Method to convert String to List<Integer>
+     * 
+     * @param partitionStr
+     * @return
+     */
     private static List<Integer> convertPartitionToList(String partitionStr) {
         List<Integer> partition = new ArrayList<>();
         String[] strNumbers = partitionStr.split("\\s+"); // Split by whitespace
@@ -412,7 +433,12 @@ public class PathfindingPartitions {
         return partition;
     }
 
-    // Helper method: Converts a FerrersBoard into a string representation
+    /**
+     * Method to convert FerrersBoard to String 
+     * 
+     * @param board
+     * @return
+     */
     private static String ferrersBoardToString(FerrersBoard board) {
         StringBuilder boardStr = new StringBuilder();
         for (int row : board.getBoard()) {

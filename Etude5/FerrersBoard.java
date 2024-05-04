@@ -7,14 +7,20 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 public class FerrersBoard {
-  private List<Integer> board; // Represents the rows of the board
+  private List<Integer> board;
 
-  // Constructor
+  /**
+   * Constructor for the FerrersBoard object
+   * @param board
+   */
   public FerrersBoard(List<Integer> board) {
     this.board = board;
   }
 
-  // Get a copy of the board
+  /**
+   * Getter method to get board
+   * @return new ArrayList<>(board);
+   */
   public ArrayList<Integer> getBoard() {
     return new ArrayList<>(board);
   }
@@ -23,8 +29,8 @@ public class FerrersBoard {
    * Makes a move on the Ferrers board.
    * A move takes a column of the board, removes it, and replaces it as a row in
    * the board of the same length. It must be placed in the correct position to
-   * maintain the
-   * Ferrers board
+   * maintain the Ferrers board
+   * @param column
    */
   public void makeMove(int column) {
 
@@ -52,6 +58,12 @@ public class FerrersBoard {
 
   }
 
+  /**
+   * Finds the shortest path from initial board to the target board
+   * @param initialBoard
+   * @param targetBoard
+   * @return PathResult which contains the path and the number of moves needed for the path
+   */
   public PathResult findShortestPath(FerrersBoard initialBoard, FerrersBoard targetBoard) {
     Queue<State> queue = new LinkedList<>();
     Set<List<Integer>> visited = new HashSet<>();
@@ -82,10 +94,14 @@ public class FerrersBoard {
       }
     }
 
-    return null;
+    return null; // Should never reach here in the first place
   }
 
-  // Generates all valid neighbors of a board
+  /**
+   * Method to generate neighbours of a board
+   * @param board
+   * @return List<FerrersBoard> neighbours of a board
+   */
   private List<FerrersBoard> generateNeighbours(FerrersBoard board) {
     List<FerrersBoard> neighbours = new ArrayList<>();
     for (int column = 0; column < board.getBoard().size(); column++) {
