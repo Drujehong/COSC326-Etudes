@@ -104,7 +104,7 @@ public class FerrersBoard {
    */
   private List<FerrersBoard> generateNeighbours(FerrersBoard board) {
     List<FerrersBoard> neighbours = new ArrayList<>();
-    for (int column = 0; column < board.getBoard().size(); column++) {
+    for (int column = 0; column < board.getBoard().get(0); column++) {
       FerrersBoard neighbour = new FerrersBoard(new ArrayList<>(board.getBoard())); // Create a copy
       neighbour.makeMove(column);
       neighbours.add(neighbour);
