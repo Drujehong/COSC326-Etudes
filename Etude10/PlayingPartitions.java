@@ -1,5 +1,8 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,67 +12,41 @@ import java.util.Set;
 
 public class PlayingPartitions {
 
-    private static List<String> finalOutput = new ArrayList<>(); // The final output
+    private static List<String> gameResults = new ArrayList<>();
 
     public static void main(String[] args) {
-
         Scanner sc = new Scanner(System.in);
+        List<List<FerrersBoard>> gameScenarios = new ArrayList<>();
+        List<FerrersBoard> currentScenario = new ArrayList<>();
 
-        List<List<FerrersBoard>> scenarios = new ArrayList<>();
-        List<FerrersBoard> scenario = new ArrayList<>();
-
-        // Read in all individual scenarios
         while (sc.hasNextLine()) {
-            String line = sc.nextLine();
-            if (line.startsWith("---")) {
-                scenarios.add(scenario);
-                scenario = new ArrayList<>();
+            String line = sc.nextLine().trim();
+            if (line.matches("-{3,}")) { // Scenario separator
+                gameScenarios.add(currentScenario);
+                currentScenario = new ArrayList<>();
+            } else if (isValidPartition(line)) { // Valid partition line
+                currentScenario.add(new FerrersBoard(parsePartition(line)));
             }
-            if (isValidPartition(line)) {
-                scenario.add(new FerrersBoard(formatPartition(line)));
-            }
+            // Ignore invalid lines (comments, empty lines, etc.)
         }
-        if (!scenario.isEmpty()) {
-            scenarios.add(scenario);
+        if (!currentScenario.isEmpty()) { // Add the last scenario if not empty
+            gameScenarios.add(currentScenario);
         }
 
-        // Process each scenario not comments should be left in the scenario
-        // a comment is a line that starts with # it could be any line if the sceario so
-        // must be checked first
-        for (List<FerrersBoard> boards : scenarios) {
+        for (List<FerrersBoard> scenario : gameScenarios) {
+            FerrersBoard startingBoard = scenario.get(0);
+            List<FerrersBoard> targetBoards = scenario.subList(1, scenario.size());
 
-            FerrersBoard start = boards.get(0);
-            List<FerrersBoard> targets = boards.subList(1, boards.size());
-            String outcome = evaluateGameOutcome(start, targets);
+            gameResults.add(startingBoard + "\n");
+            targetBoards.forEach(target -> gameResults.add(target.toString()));
+            gameResults.add(evaluateGameOutcome(startingBoard, targetBoards));
 
-            finalOutput.add(start + "\n");
-            for (FerrersBoard target : targets) {
-                finalOutput.add(target.toString());
-            }
-            finalOutput.add(outcome);
-            if (scenarios.get(scenarios.size() - 1) != boards) {
-                finalOutput.add("--------");
+            if (scenario != gameScenarios.get(gameScenarios.size() - 1)) {
+                gameResults.add("--------");
             }
         }
 
-        // Write the contents of finalOutput to text file given in args in terminal
-        if (args.length > 0) {
-            try {
-                java.io.FileWriter writer = new java.io.FileWriter(args[0]);
-                for (String line : finalOutput) {
-                    writer.write(line + "\n");
-                }
-                writer.close();
-            } catch (java.io.IOException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-            }
-        } else {
-            for (String line : finalOutput) {
-                System.out.println(line);
-            }
-        }
-
+        writeOutput(args);
     }
 
     /**
@@ -151,16 +128,35 @@ public class PlayingPartitions {
     }
 
     /**
+     * A method to write the output to the console or a file
+     * 
+     * @param args
+     */
+    private static void writeOutput(String[] args) {
+        try {
+            FileWriter writer = args.length > 0 ? new FileWriter(args[0]) : null;
+            for (String line : gameResults) {
+                if (writer != null) {
+                    writer.write(line + "\n");
+                } else {
+                    System.out.println(line);
+                }
+            }
+            if (writer != null) {
+                writer.close();
+            }
+        } catch (IOException e) {
+            System.err.println("Error writing output: " + e.getMessage());
+        }
+    }
+
+    /**
      * A method to format the given string line into a partition
      */
-    private static ArrayList<Integer> formatPartition(String line) {
-        String[] parts = line.split(line.contains(",") ? "," : "\\s+");
-        ArrayList<Integer> numbers = new ArrayList<>();
-        for (String part : parts) {
-            part = part.trim();
-            numbers.add(Integer.parseInt(part));
-        }
-        Collections.sort(numbers, Collections.reverseOrder());
-        return numbers;
+    private static List<Integer> parsePartition(String line) {
+        return Arrays.stream(line.split("[\\s,]+")) // Split and parse to integers
+                .map(Integer::parseInt)
+                .sorted(Comparator.reverseOrder()) // Sort in descending order
+                .toList();
     }
 }
